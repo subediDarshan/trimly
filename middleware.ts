@@ -4,31 +4,31 @@ import { NextRequest, NextResponse } from "next/server";
 const isPublicRoute = createRouteMatcher([
     "/sign-in(.*)",
     "/sign-up(.*)",
-    "/",
-    "/home"
+    "/"
 ])
 
-const isPublicApiRoute = createRouteMatcher([
-    "/api/videos"
-])
 
 export default clerkMiddleware(async(auth, req:NextRequest) => {
     const {userId} = await auth()
     const currentUrl = new URL(req.url)
-    const isAccessingHomePage = currentUrl.pathname === "/home"
     const isApiRequest = currentUrl.pathname.startsWith("/api")
 
-    if(userId && isPublicRoute(req) && !isAccessingHomePage) {
+
+    if(currentUrl.pathname === "/") {
+        return NextResponse.redirect(new URL("/home", req.url))
+    }
+
+    if(userId && isPublicRoute(req)) {
         return NextResponse.redirect(new URL("/home", req.url))
     }
 
     if(!userId) {
         
-        if(!isPublicRoute(req) && !isPublicApiRoute(req)) {
+        if(!isPublicRoute(req)) {
             console.log("check");
             return NextResponse.redirect(new URL("/sign-in", req.url))
         }
-        if(isApiRequest && !isPublicApiRoute(req)) {
+        if(isApiRequest) {
             return NextResponse.redirect(new URL("/sign-in", req.url))
         }
     }
