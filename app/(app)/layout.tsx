@@ -72,12 +72,15 @@ export default function AppLayout({
               {user && (
                 <>
                   <div className="avatar">
-                    <div className="w-8 h-8 rounded-full">
+                    <div className="w-8 h-8 rounded-full overflow-hidden">
                       <Image
                         src={user.imageUrl}
                         alt={
                           user.username || user.emailAddresses[0].emailAddress
                         }
+                        width={32} // Set to match the container (w-8 = 32px)
+                        height={32} // Same as width to keep it circular
+                        className="object-cover rounded-full" // Ensure image fills the space correctly
                       />
                     </div>
                   </div>
@@ -140,12 +143,10 @@ export default function AppLayout({
           {!user && (
             <div className="p-4">
               <SignInButton>
-              <button
-                className="btn btn-outline w-full"
-              >
-                <LogInIcon className="mr-2 h-5 w-5" />
-                Sign In
-              </button>
+                <button className="btn btn-outline w-full">
+                  <LogInIcon className="mr-2 h-5 w-5" />
+                  Sign In
+                </button>
               </SignInButton>
             </div>
           )}
