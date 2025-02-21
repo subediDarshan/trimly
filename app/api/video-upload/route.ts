@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@clerk/nextjs/server";
 import path from "path";
-import { writeFile } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 
 const prisma = new PrismaClient();
 
@@ -100,15 +100,17 @@ export async function POST(req: NextRequest) {
                 userId,
             },
         });
-
+        await unlink(filePath); // Delete file
         return NextResponse.json(video);
     } catch (error) {
         console.log("Upload video failed", error);
+        
         return NextResponse.json(
             { error: "Upload video failed" },
             { status: 500 }
         );
     } finally {
+      
         await prisma.$disconnect();
     }
 }
